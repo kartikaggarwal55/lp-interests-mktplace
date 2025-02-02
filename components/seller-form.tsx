@@ -14,6 +14,9 @@ import { cn } from "@/lib/utils"
 import type React from "react"
 import type { SellerFormData } from "@/types/form"
 import { useState } from "react"
+import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
+
 
 const VINTAGE_YEARS = Array.from({ length: 25 }, (_, i) => (2000 + i).toString())
 const SALE_PERCENTAGES = ["1%-10%", "11%-25%", "26%-50%", "51%-100%"]
@@ -54,26 +57,47 @@ export function SellerForm() {
   const { formData, updateFormData, setStep } = useForm()
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState("")
+  const { toast } = useToast()
+  const router = useRouter() // Initialize useRouter
+
 
   const sellerFormData = formData as SellerFormData
 
-
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const response = await fetch("https://sheetdb.io/api/v1/2r66v8uh13oz5", {
+    const submissionData = {
+      ...sellerFormData,
+      role: "seller",
+    }
+
+    console.log("Submitting seller data:", JSON.stringify({ data: [submissionData] }))
+
+    const response = await fetch("https://sheetdb.io/api/v1/d2w3k9rhwnd9e", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ data: sellerFormData }), // Wrap data inside a "data" object
-    });
+      body: JSON.stringify({ data: [submissionData] }),
+    })
 
     if (response.ok) {
-      console.log("Form submitted successfully");
+      toast({
+        title: "Success",
+        description: "Seller form submitted successfully",
+
+      })
+      console.log("Seller form submission successful:", submissionData)
+      setTimeout(() => {
+        router.push("/") // Redirect to the home page
+      }, 1000) // Delay for toast visibility
     } else {
-      console.error("Error submitting form");
-      console.log(response);
+      toast({
+        title: "Error",
+        description: "Error submitting seller form",
+        variant: "destructive",
+      })
+      console.error("Error submitting seller form:", submissionData)
     }
-  };
+  }
 
   return (
     <Card className="p-6">
@@ -121,7 +145,11 @@ export function SellerForm() {
 
             <div className="space-y-2">
               <Label>Vintage Year *</Label>
-              <Select required onValueChange={(value) => updateFormData({ vintageYear: value })}>
+              <Select
+                required
+                onValueChange={(value) => updateFormData({ vintageYear: value } as Partial<SellerFormData>)}
+                value={sellerFormData.vintageYear}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select year" />
                 </SelectTrigger>
@@ -143,17 +171,21 @@ export function SellerForm() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="lpCommitment">LP Commitment Amount *</Label>
-              <Input
-                id="lpCommitment"
-                type="number"
-                required
-                min="0"
-                step="1000"
-                value={sellerFormData.lpCommitmentAmount || ""}
-                onChange={(e) =>
-                  updateFormData({ lpCommitmentAmount: Number(e.target.value) } as Partial<SellerFormData>)
-                }
-              />
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                <Input
+                  id="lpCommitment"
+                  type="number"
+                  required
+                  min="0"
+                  step="1000"
+                  className="pl-7"
+                  value={sellerFormData.lpCommitmentAmount || ""}
+                  onChange={(e) =>
+                    updateFormData({ lpCommitmentAmount: Number(e.target.value) } as Partial<SellerFormData>)
+                  }
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -177,7 +209,11 @@ export function SellerForm() {
 
             <div className="space-y-2">
               <Label>Sale Percentage *</Label>
-              <Select required onValueChange={(value) => updateFormData({ salePercentage: value })}>
+              <Select
+                required
+                onValueChange={(value) => updateFormData({ salePercentage: value } as Partial<SellerFormData>)}
+                value={sellerFormData.salePercentage}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select percentage" />
                 </SelectTrigger>
@@ -269,3 +305,4 @@ export function SellerForm() {
     </Card>
   )
 }
+

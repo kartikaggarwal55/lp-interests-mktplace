@@ -21,7 +21,6 @@ const initialSellerData: SellerFormData = {
   linkedinUrl: "",
   fundName: "",
   vintageYear: "",
-  position: "",
   lpCommitmentAmount: 0,
   lpInvestedAmount: 0,
   salePercentage: "",

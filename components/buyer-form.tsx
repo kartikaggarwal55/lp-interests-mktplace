@@ -7,14 +7,28 @@ import { Card } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import type React from "react" // Added import for React
-import { BuyerFormData } from "@/types/form"
 import { Input } from "@/components/ui/input"
-import { useState } from "react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
+import type React from "react"
+import { useState } from "react"
+import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
+
+type BuyerFormData = {
+    availableCapital?: string
+    investmentInterests?: string[]
+    backgroundInfo?: string
+    referralSource?: string
+    fundsOfInterest?: string[]
+    hasExistingInvestments?: boolean
+    currentInvestments?: string
+    capitalSources?: string[]
+    otherCapitalSource?: string
+    otherInvestmentInterest?: string
+}
 
 const CAPITAL_RANGES = ["< $100K", "$100K-$500K", "$500K-$1M", "$1M+"]
 
@@ -29,12 +43,7 @@ const INVESTMENT_TYPES = [
 
 const REFERRAL_SOURCES = ["AngelList", "LinkedIn", "Referral", "Social Media", "Other"]
 
-const CAPITAL_SOURCES = [
-    "Personal Savings",
-    "Family Office",
-    "Investment Fund",
-    "Other"
-]
+const CAPITAL_SOURCES = ["Personal", "Institutional", "Family Office", "Other"]
 
 const FUND_OPTIONS = [
     "Blackstone Capital Partners",
@@ -66,36 +75,68 @@ const FUND_OPTIONS = [
     "Benchmark Capital",
     "Index Ventures",
     "Lightspeed Venture Partners",
-    "NEA"
+    "NEA",
 ]
 
 export function BuyerForm() {
     const { formData, updateFormData, setStep } = useForm()
     const [open, setOpen] = useState(false)
     const [selectedFunds, setSelectedFunds] = useState<string[]>([])
+    const { toast } = useToast()
+    const router = useRouter() // Initialize useRouter
 
-    // Cast formData to BuyerFormData
     const buyerFormData = formData as BuyerFormData
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const validateForm = (): boolean => {
+        if (!buyerFormData.investmentInterests || buyerFormData.investmentInterests.length === 0) {
+            alert("Please select at least one investment interest.")
+            return false
+        }
+        if (!buyerFormData.capitalSources || buyerFormData.capitalSources.length === 0) {
+            alert("Please select at least one capital source.")
+            return false
+        }
+        return true
+    }
 
-        console.log("Submitting data:", JSON.stringify({ data: [formData] })); // Debugging
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        if (!validateForm()) {
+            return
+        }
+
+        const submissionData = {
+            ...buyerFormData,
+            role: "buyer",
+        }
+
+        console.log("Submitting buyer data:", JSON.stringify({ data: [submissionData] }))
 
         const response = await fetch("https://sheetdb.io/api/v1/5wwksu1tbid5f", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ data: formData }), // Ensure "data" object wrapper
-        });
-
+            body: JSON.stringify({ data: [submissionData] }),
+        })
 
         if (response.ok) {
-            console.log("Form submitted successfully");
+            toast({
+                title: "Success",
+                description: "Buyer form submitted successfully",
+            })
+            console.log("Buyer form submission successful:", submissionData)
+            setTimeout(() => {
+                router.push("/") // Redirect to the home page
+            }, 1000) // Delay for toast visibility
         } else {
-            console.error("Error submitting form", await response.json()); // Log detailed error
+            toast({
+                title: "Error",
+                description: "Error submitting buyer form",
+                variant: "destructive",
+            })
+            console.error("Error submitting buyer form:", submissionData)
         }
-    };
-
+    }
 
     const toggleFundSelection = (fund: string) => {
         setSelectedFunds((prevFunds) => {
@@ -115,9 +156,14 @@ export function BuyerForm() {
                 <div className="space-y-6">
                     <h3 className="font-medium text-lg">Investment Details</h3>
                     <div className="space-y-4">
+                        {/* Available Capital */}
                         <div className="space-y-2">
                             <Label>Available Capital for Investment *</Label>
-                            <Select required onValueChange={(value) => updateFormData({ availableCapital: value })}>
+                            <Select
+                                required
+                                onValueChange={(value) => updateFormData({ availableCapital: value } as Partial<BuyerFormData>)}
+                                value={buyerFormData.availableCapital}
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select range" />
                                 </SelectTrigger>
@@ -131,6 +177,7 @@ export function BuyerForm() {
                             </Select>
                         </div>
 
+                        {/* Investment Interests */}
                         <div className="space-y-2">
                             <Label>Investment Interests *</Label>
                             <div className="grid gap-2">
@@ -140,10 +187,12 @@ export function BuyerForm() {
                                             id={type}
                                             checked={buyerFormData.investmentInterests?.includes(type)}
                                             onCheckedChange={(checked) => {
+                                                const updatedInterests = checked
+                                                    ? [...(buyerFormData.investmentInterests || []), type]
+                                                    : (buyerFormData.investmentInterests || []).filter((t) => t !== type)
                                                 updateFormData({
-                                                    investmentInterests: checked
-                                                        ? [...(buyerFormData.investmentInterests || []), type]
-                                                        : (buyerFormData.investmentInterests || []).filter((t: string) => t !== type),
+                                                    investmentInterests: updatedInterests,
+                                                    ...(type === "Other" && !checked ? { otherInvestmentInterest: "" } : {}),
                                                 } as Partial<BuyerFormData>)
                                             }}
                                         />
@@ -152,7 +201,22 @@ export function BuyerForm() {
                                 ))}
                             </div>
                         </div>
-                        {/* Specific Funds of Interest - No changes needed here as it looks correct */}
+
+                        {/* Other Investment Interest */}
+                        {buyerFormData.investmentInterests?.includes("Other") && (
+                            <div className="space-y-2">
+                                <Label htmlFor="otherInvestmentInterest">Please specify other investment interest</Label>
+                                <Input
+                                    id="otherInvestmentInterest"
+                                    value={buyerFormData.otherInvestmentInterest || ""}
+                                    onChange={(e) =>
+                                        updateFormData({ otherInvestmentInterest: e.target.value } as Partial<BuyerFormData>)
+                                    }
+                                />
+                            </div>
+                        )}
+
+                        {/* Specific Funds of Interest */}
                         <div className="space-y-2">
                             <Label>Specific Funds of Interest (up to 5)</Label>
                             <Popover open={open} onOpenChange={setOpen}>
@@ -183,7 +247,9 @@ export function BuyerForm() {
                                                             setOpen(false)
                                                         }}
                                                     >
-                                                        <Check className={cn("mr-2 h-4 w-4", selectedFunds.includes(fund) ? "opacity-100" : "opacity-0")} />
+                                                        <Check
+                                                            className={cn("mr-2 h-4 w-4", selectedFunds.includes(fund) ? "opacity-100" : "opacity-0")}
+                                                        />
                                                         {fund}
                                                     </CommandItem>
                                                 ))}
@@ -196,11 +262,46 @@ export function BuyerForm() {
                     </div>
                 </div>
 
+                {/* Current Investment Portfolio */}
+                <div className="space-y-6">
+                    <h3 className="font-medium text-lg">Current Investment Portfolio</h3>
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label>Do you have existing interests in other funds? *</Label>
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="hasExistingInvestments"
+                                    checked={buyerFormData.hasExistingInvestments}
+                                    onCheckedChange={(checked) => {
+                                        updateFormData({
+                                            hasExistingInvestments: checked as boolean,
+                                            ...(!checked ? { currentInvestments: "" } : {}),
+                                        } as Partial<BuyerFormData>)
+                                    }}
+                                />
+                                <Label htmlFor="hasExistingInvestments">Yes</Label>
+                            </div>
+                        </div>
 
-                {/* Capital Sources - Corrected Checkbox Logic */}
+                        {buyerFormData.hasExistingInvestments && (
+                            <div className="space-y-2">
+                                <Label htmlFor="currentInvestments">List your current fund investments</Label>
+                                <Textarea
+                                    id="currentInvestments"
+                                    placeholder="Please list your current fund investments..."
+                                    value={buyerFormData.currentInvestments || ""}
+                                    onChange={(e) => updateFormData({ currentInvestments: e.target.value } as Partial<BuyerFormData>)}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Additional Information */}
                 <div className="space-y-6">
                     <h3 className="font-medium text-lg">Additional Information</h3>
                     <div className="space-y-4">
+                        {/* Capital Sources */}
                         <div className="space-y-2">
                             <Label>Capital Sources *</Label>
                             <div className="grid gap-2">
@@ -210,10 +311,12 @@ export function BuyerForm() {
                                             id={source}
                                             checked={buyerFormData.capitalSources?.includes(source)}
                                             onCheckedChange={(checked) => {
+                                                const updatedSources = checked
+                                                    ? [...(buyerFormData.capitalSources || []), source]
+                                                    : (buyerFormData.capitalSources || []).filter((s) => s !== source)
                                                 updateFormData({
-                                                    capitalSources: checked
-                                                        ? [...(buyerFormData.capitalSources || []), source]
-                                                        : (buyerFormData.capitalSources || []).filter((s: string) => s !== source),
+                                                    capitalSources: updatedSources,
+                                                    ...(source === "Other" && !checked ? { otherCapitalSource: "" } : {}),
                                                 } as Partial<BuyerFormData>)
                                             }}
                                         />
@@ -221,20 +324,21 @@ export function BuyerForm() {
                                     </div>
                                 ))}
                             </div>
-
-                            {buyerFormData.capitalSources?.includes("Other") && (
-                                <div className="space-y-2">
-                                    <Label htmlFor="otherCapitalSource">Please specify other source</Label>
-                                    <Input
-                                        id="otherCapitalSource"
-                                        required
-                                        value={buyerFormData.otherCapitalSource || ""}
-                                        onChange={(e) => updateFormData({ otherCapitalSource: e.target.value } as Partial<BuyerFormData>)}
-                                    />
-                                </div>
-                            )}
                         </div>
 
+                        {/* Other Capital Source */}
+                        {buyerFormData.capitalSources?.includes("Other") && (
+                            <div className="space-y-2">
+                                <Label htmlFor="otherCapitalSource">Please specify other source</Label>
+                                <Input
+                                    id="otherCapitalSource"
+                                    value={buyerFormData.otherCapitalSource || ""}
+                                    onChange={(e) => updateFormData({ otherCapitalSource: e.target.value } as Partial<BuyerFormData>)}
+                                />
+                            </div>
+                        )}
+
+                        {/* Background Information */}
                         <div className="space-y-2">
                             <Label htmlFor="backgroundInfo">Background Information</Label>
                             <Textarea
@@ -245,9 +349,14 @@ export function BuyerForm() {
                             />
                         </div>
 
+                        {/* Referral Source */}
                         <div className="space-y-2">
                             <Label>How Did You Hear About Us? *</Label>
-                            <Select required onValueChange={(value) => updateFormData({ referralSource: value })}>
+                            <Select
+                                required
+                                onValueChange={(value) => updateFormData({ referralSource: value } as Partial<BuyerFormData>)}
+                                value={buyerFormData.referralSource}
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select source" />
                                 </SelectTrigger>
@@ -267,9 +376,15 @@ export function BuyerForm() {
                     <Button type="button" variant="outline" onClick={() => setStep(1)}>
                         Back
                     </Button>
-                    <Button type="submit">Submit</Button>
+                    <Button
+                        type="submit"
+                        disabled={!buyerFormData.investmentInterests?.length || !buyerFormData.capitalSources?.length || !buyerFormData.referralSource}
+                    >
+                        Submit
+                    </Button>
                 </div>
             </form>
         </Card>
     )
 }
+

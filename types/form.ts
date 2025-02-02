@@ -28,7 +28,6 @@ export interface BuyerFormData extends CommonFormData {
 export interface SellerFormData extends CommonFormData {
   fundName: string
   vintageYear: string
-  position: string
   lpCommitmentAmount: number
   lpInvestedAmount: number
   salePercentage: string
