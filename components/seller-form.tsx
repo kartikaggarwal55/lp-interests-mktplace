@@ -99,6 +99,19 @@ export function SellerForm() {
     }
   }
 
+  const isFormValid = () => {
+    return (
+      sellerFormData.fundName &&
+      sellerFormData.vintageYear &&
+      sellerFormData.lpCommitmentAmount &&
+      sellerFormData.lpInvestedAmount &&
+      sellerFormData.salePercentage &&
+      sellerFormData.expectedValue &&
+      sellerFormData.fundManagerName &&
+      sellerFormData.fundManagerEmail
+    );
+  };
+
   return (
     <Card className="p-6">
       <form onSubmit={handleSubmit} className="space-y-8">
@@ -144,7 +157,8 @@ export function SellerForm() {
             </div>
 
             <div className="space-y-2">
-              <Label>Vintage Year *</Label>
+              <Label >Vintage Year *</Label>
+              <p className="text-xs text-gray-500">Specific Entity</p>
               <Select
                 required
                 onValueChange={(value) => updateFormData({ vintageYear: value } as Partial<SellerFormData>)}
@@ -299,7 +313,9 @@ export function SellerForm() {
           <Button type="button" variant="outline" onClick={() => setStep(1)}>
             Back
           </Button>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={!isFormValid()}>
+            Submit
+          </Button>
         </div>
       </form>
     </Card>
