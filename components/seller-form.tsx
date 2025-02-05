@@ -310,10 +310,10 @@ export function SellerForm() {
         </div>
 
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => setStep(1)}>
+          <Button type="button" variant="outline" className="hover:shadow-sm active:shadow-md" onClick={() => setStep(1)}>
             Back
           </Button>
-          <Button type="submit" disabled={!isFormValid()}>
+          <Button type="submit" className="hover:shadow-sm active:shadow-md" disabled={!isFormValid()}>
             Submit
           </Button>
         </div>

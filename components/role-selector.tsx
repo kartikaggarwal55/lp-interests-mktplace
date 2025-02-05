@@ -24,7 +24,7 @@ export function RoleSelector() {
                 <div className="text-center space-y-4">
                     <BuildingIcon className="w-12 h-12 mx-auto text-primary" />
                     <h3 className="text-xl font-semibold">I&apos;m a Seller</h3>
-                    <p className="text-muted-foreground">Looking to sell fund positions</p>
+                    <p className="text-muted-foreground">Looking to sell LP positions</p>
                 </div>
             </Card>
         </div>

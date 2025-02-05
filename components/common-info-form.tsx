@@ -62,7 +62,7 @@ export function CommonInfoForm() {
                     />
                 </div>
                 <div className="flex justify-end gap-4">
-                    <Button type="button" variant="outline" onClick={() => setStep(0)}>
+                    <Button type="button" variant="outline" className="hover:shadow-sm active:shadow-md" onClick={() => setStep(0)}>
                         Back
                     </Button>
                     <Button type="submit">Continue</Button>
