@@ -2,28 +2,34 @@
 
 import { handleAuth } from '@auth0/nextjs-auth0';
 
-// Define the type for the route params (remains the same)
 interface Params {
   auth0: string[];
 }
 
-// Updated GET handler:
-// Changed the type of the second argument from { params: Params } to { params: Promise<Params> }
-// and now await params directly.
 export async function GET(
   request: Request,
-  { params }: { params: Promise<Params> } // <-- Changed: wrap params in a Promise
+  { params }: { params: Promise<Params> } // <-- Params now wrapped in Promise
 ) {
-  // Await the params before using them
-  const awaitedParams = await params; // <-- Changed: directly await params
-  return handleAuth()(request, { params: awaitedParams });
+  try {
+    // Await the dynamic parameters
+    const awaitedParams = await params; // <-- Await the params
+    return handleAuth()(request, { params: awaitedParams });
+  } catch (error) {
+    // Log the error so you can see details in Vercel logs
+    console.error("Error in GET auth route:", error); // <-- Added error logging
+    return new Response("Internal Server Error", { status: 500 });
+  }
 }
 
-// Updated POST handler with the same changes
 export async function POST(
   request: Request,
-  { params }: { params: Promise<Params> } // <-- Changed: wrap params in a Promise
+  { params }: { params: Promise<Params> } // <-- Params now wrapped in Promise
 ) {
-  const awaitedParams = await params; // <-- Changed: directly await params
-  return handleAuth()(request, { params: awaitedParams });
+  try {
+    const awaitedParams = await params; // <-- Await the params
+    return handleAuth()(request, { params: awaitedParams });
+  } catch (error) {
+    console.error("Error in POST auth route:", error); // <-- Added error logging
+    return new Response("Internal Server Error", { status: 500 });
+  }
 }
