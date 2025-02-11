@@ -2,27 +2,28 @@
 
 import { handleAuth } from '@auth0/nextjs-auth0';
 
-// Update type for route params:
-// Changed from `auth0?: string[]` to `auth0: string[]` so that the parameter is always provided.
+// Define the type for the route params (remains the same)
 interface Params {
-  auth0: string[]; // <-- Changed: removed the optional operator "?"
+  auth0: string[];
 }
 
-// Async GET handler to await and pass dynamic params
+// Updated GET handler:
+// Changed the type of the second argument from { params: Params } to { params: Promise<Params> }
+// and now await params directly.
 export async function GET(
   request: Request,
-  { params }: { params: Params } // Using updated type
+  { params }: { params: Promise<Params> } // <-- Changed: wrap params in a Promise
 ) {
-  // Explicitly await the params to satisfy Next.js requirements (this is a no-op here, but ensures consistency)
-  const awaitedParams = await Promise.resolve(params);
+  // Await the params before using them
+  const awaitedParams = await params; // <-- Changed: directly await params
   return handleAuth()(request, { params: awaitedParams });
 }
 
-// Async POST handler to await and pass dynamic params
+// Updated POST handler with the same changes
 export async function POST(
   request: Request,
-  { params }: { params: Params } // Using updated type
+  { params }: { params: Promise<Params> } // <-- Changed: wrap params in a Promise
 ) {
-  const awaitedParams = await Promise.resolve(params);
+  const awaitedParams = await params; // <-- Changed: directly await params
   return handleAuth()(request, { params: awaitedParams });
 }
