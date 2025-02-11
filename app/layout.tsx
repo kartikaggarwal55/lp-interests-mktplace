@@ -1,8 +1,9 @@
+// app/layout.js
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster"
-
+import { Toaster } from "@/components/ui/toaster";
+import { Providers } from "./providers"; // <-- Modified: Import the Providers component
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,12 +26,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-        <Toaster />
+    <html lang="en" className="scroll-smooth">
+      {/* can add suppressHydrationWarning */}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Providers> {/* <-- Modified: Wrap the entire app with the Providers component */}
+          {children}
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

@@ -17,14 +17,15 @@ export function Navbar() {
 
                     {/* Center Navigation */}
                     <div className="hidden md:flex items-center gap-8">
-                        <Link href="#features" className="text-md text-black hover:text-gray-700 font-medium">
-                            Features
-                        </Link>
+
                         <Link href="#stats" className="text-md text-black hover:text-gray-700 font-medium">
                             Our Stats
                         </Link>
-                        <Link href="#company" className="text-md text-black hover:text-gray-700 font-medium">
-                            Company
+                        <Link href="#how-it-works" className="text-md text-black hover:text-gray-700 font-medium">
+                            How It Works
+                        </Link>
+                        <Link href="#faq" className="text-md text-black hover:text-gray-700 font-medium">
+                            FAQ
                         </Link>
                     </div>
 

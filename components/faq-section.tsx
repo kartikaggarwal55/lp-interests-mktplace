@@ -31,7 +31,7 @@ const faqs = [
 ]
 export function FAQSection() {
     return (
-        <section className="py-16 bg-softGreenBackground/80">
+        <section className="py-16 bg-softGreenBackground/80" id="faq">
             <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold text-center mb-8 text-black">Frequently Asked Questions</h2>
                 <Accordion type="single" collapsible className="w-full max-w-2xl mx-auto">
