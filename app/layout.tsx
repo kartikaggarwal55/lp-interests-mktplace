@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./providers"; // <-- Modified: Import the Providers component
+import { FormProvider } from "@/contexts/form-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,9 @@ export default function RootLayout({
       {/* can add suppressHydrationWarning */}
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers> {/* <-- Modified: Wrap the entire app with the Providers component */}
-          {children}
+          <FormProvider>
+            {children}
+          </FormProvider>
           <Toaster />
         </Providers>
       </body>
