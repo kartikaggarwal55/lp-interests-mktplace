@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client"; // Auth0 hook for user state
-import { useRouter, useSearchParams } from "next/navigation"; // <-- Added useSearchParams
+import { useRouter, useSearchParams } from "next/navigation"; // For routing and query parameters
 import { FormProvider, useForm } from "@/contexts/form-context";
 import { CommonInfoForm } from "@/components/common-info-form";
 import { BuyerForm } from "@/components/buyer-form";
@@ -12,8 +12,8 @@ import { Home } from "lucide-react";
 import Link from "next/link";
 import LogoutButton from "@/components/logout-button";
 
-// Updated FormStep: Remove the role selector step (case 0)
-export function FormStep() {
+// Remove the export keyword from FormStep so it won't be exported as a page export
+function FormStep() {
     const { step, role } = useForm();
 
     switch (step) {
@@ -28,15 +28,15 @@ export function FormStep() {
 
 // A nested component to update form context based on the query parameter
 function FormContent() {
-    const searchParams = useSearchParams();  // <-- Get URL query parameters
-    const queryRole = searchParams.get("role");  // <-- Retrieve the role from the URL
+    const searchParams = useSearchParams(); // Get URL query parameters
+    const queryRole = searchParams.get("role"); // Retrieve the role from the URL
     const { role, setRole, setStep } = useForm();
 
     useEffect(() => {
         // If a valid role is provided in the URL and not yet set in context, update the context.
         if (queryRole && (queryRole === "buyer" || queryRole === "seller") && !role) {
-            setRole(queryRole as "buyer" | "seller");  // <-- Update the role in context
-            setStep(1);  // <-- Start the form at step 1 (CommonInfoForm)
+            setRole(queryRole as "buyer" | "seller"); // Update the role in context
+            setStep(1); // Start the form at step 1 (CommonInfoForm)
         }
     }, [queryRole, role, setRole, setStep]);
 
@@ -92,7 +92,7 @@ export default function FormPage() {
                     </p>
                 </div>
                 <FormProvider>
-                    <FormContent /> {/* <-- This component reads the URL and updates the context */}
+                    <FormContent /> {/* This component reads the URL and updates the context */}
                 </FormProvider>
             </div>
         </div>
