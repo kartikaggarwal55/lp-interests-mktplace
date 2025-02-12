@@ -1,7 +1,7 @@
 
 export function Hero() {
     return (
-        <section className="text-center py-32 px-6">
+        <section className="text-center py-64 px-6">
             <div className="container mx-auto">
                 <h1 className="text-4xl md:text-6xl font-bold mb-5">
                     Liquidity for Your Private Investments

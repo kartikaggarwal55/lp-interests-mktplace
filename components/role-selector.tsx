@@ -11,6 +11,7 @@ export function RoleSelector() {
 
     const handleRoleSelect = (role: "buyer" | "seller") => {
         setRole(role);       // Update the role in context
+        localStorage.setItem("selectedRole", role);
         setStep(1);          // Set the first step (Common Info)
         router.push("/form"); // Route to the form page
     };

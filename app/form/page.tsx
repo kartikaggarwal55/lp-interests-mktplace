@@ -15,6 +15,7 @@ import LogoutButton from "@/components/logout-button";
 function FormStep() {
     const { step, role } = useForm();
 
+
     // If no role has been set (e.g. user navigated here directly), you can show a message
     if (!role) {
         return <div className="text-center p-4">Please select a role on the home page.</div>;
@@ -33,6 +34,19 @@ function FormStep() {
 export default function FormPage() {
     const { user, isLoading } = useUser();
     const router = useRouter();
+
+    const { role, setRole, setStep } = useForm();
+
+
+    useEffect(() => {
+        // Retrieve role from localStorage if not already set
+        const storedRole = localStorage.getItem("selectedRole");
+        if (!role && storedRole) {
+            setRole(storedRole as "buyer" | "seller");
+            setStep(1);
+        }
+    }, [role, setRole, setStep]);
+
 
     // Protect the form page: If not authenticated, redirect to Auth0 login.
     useEffect(() => {
@@ -78,17 +92,17 @@ export default function FormPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-primaryGreen/40 to-softGreenBackground py-10 px-4 relative">
             <div className="flex flex-row absolute top-5 right-9 gap-2">
-                <LogoutButton />
                 <Link href="/">
                     <Button
-                        variant="default"
                         size="sm"
-                        className="rounded-full bg-black p-4 px-6 hover:shadow-sm active:shadow-md gap-3"
+                        className="rounded-outlinep-3 hover:shadow-sm active:shadow-md gap-3"
                     >
                         <Home className="h-4 w-4" />
-                        Home
                     </Button>
+
                 </Link>
+                <LogoutButton />
+
             </div>
             <div className="container max-w-2xl mx-auto space-y-2">
                 <div className="relative">

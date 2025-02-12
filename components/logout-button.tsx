@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 const LogoutButton: React.FC = () => {
     const handleLogout = (): void => {
@@ -16,12 +17,13 @@ const LogoutButton: React.FC = () => {
 
     return (
         <Button
-            variant="default"
-            size="sm"
             onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-600 text-white rounded-full hover:shadow-sm active:shadow-md p-4 px-6"
+
+            variant="destructive"
+            size="sm"
+            className="rounded-outline p-3 hover:shadow-sm active:shadow-md gap-3"
         >
-            Logout
+            <LogOut className="h-4 w-4" />
         </Button>
     );
 };
