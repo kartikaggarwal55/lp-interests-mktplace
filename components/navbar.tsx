@@ -15,26 +15,19 @@ export function Navbar() {
                         Dots
                     </Link>
 
-                    {/* Center Navigation */}
-                    <div className="hidden md:flex items-center gap-8">
 
-                        <Link href="#stats" className="text-md text-black hover:text-gray-700 font-medium">
-                            Our Stats
-                        </Link>
-                        <Link href="#how-it-works" className="text-md text-black hover:text-gray-700 font-medium">
-                            How It Works
+                    <div className="flex flex-row gap-4 items-center">
+                        <Link href="/form">
+                            <Button variant="default" size="sm" className="rounded-3xl bg-black text-white p-4 hover:shadow-sm">
+                                Get Started
+                            </Button>
+
                         </Link>
                         <Link href="#faq" className="text-md text-black hover:text-gray-700 font-medium">
                             FAQ
                         </Link>
-                    </div>
 
-                    {/* Right side button */}
-                    <Link href="/form">
-                        <Button variant="default" size="sm" className="rounded-3xl bg-black text-white p-4 hover:shadow-sm">
-                            Buy/Sell Assets
-                        </Button>
-                    </Link>
+                    </div>
                 </div>
             </div>
         </nav>

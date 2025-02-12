@@ -1,9 +1,10 @@
 "use client"
 
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
 import type { Role, BuyerFormData, SellerFormData } from "@/types/form"
 
-const initialBuyerData: BuyerFormData = {
+// Export your initial data so you can use it when resetting the form.
+export const initialBuyerData: BuyerFormData = {  // <-- Exported initial buyer data
   fullName: "",
   email: "",
   linkedinUrl: "",
@@ -15,7 +16,7 @@ const initialBuyerData: BuyerFormData = {
   referralSource: ""
 }
 
-const initialSellerData: SellerFormData = {
+export const initialSellerData: SellerFormData = {  // <-- Exported initial seller data
   fullName: "",
   email: "",
   linkedinUrl: "",
@@ -43,9 +44,18 @@ const FormContext = createContext<FormContextType | undefined>(undefined)
 export function FormProvider({ children }: { children: React.ReactNode }) {
   const [role, setRole] = useState<Role | null>(null)
   const [step, setStep] = useState(0)
-  const [formData, setFormData] = useState<BuyerFormData | SellerFormData>(
-    () => role === 'buyer' ? initialBuyerData : initialSellerData
-  )
+  // Start with an empty object or a generic initial state.
+  const [formData, setFormData] = useState<BuyerFormData | SellerFormData>({} as BuyerFormData | SellerFormData)
+
+  // <-- Change: Add an effect to update/reset formData when the role changes.
+  useEffect(() => {
+    if (role === "buyer") {
+      setFormData(initialBuyerData)
+    } else if (role === "seller") {
+      setFormData(initialSellerData)
+    }
+    // If role is not set, you could leave formData as an empty object.
+  }, [role])
 
   const updateFormData = (data: Partial<BuyerFormData | SellerFormData>) => {
     setFormData(prev => ({
@@ -66,4 +76,3 @@ export const useForm = () => {
   if (!context) throw new Error("useForm must be used within FormProvider")
   return context
 }
-

@@ -1,14 +1,15 @@
 "use client"
+
+import { useRouter } from "next/navigation"  // <-- Import useRouter for redirection
 import { Card } from "@/components/ui/card"
-import { useForm } from "@/contexts/form-context"
 import { UserIcon, BuildingIcon } from "lucide-react"
 
 export function RoleSelector() {
-    const { setRole, setStep } = useForm()
+    const router = useRouter()
 
     const handleRoleSelect = (role: "buyer" | "seller") => {
-        setRole(role)
-        setStep(1)
+        // Instead of directly setting context here, redirect to the form page with the role in the query string.
+        router.push(`/form?role=${role}`)  // <-- Change: use query parameter for role
     }
 
     return (
@@ -30,4 +31,3 @@ export function RoleSelector() {
         </div>
     )
 }
-

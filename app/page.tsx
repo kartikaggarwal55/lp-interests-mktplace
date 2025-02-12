@@ -1,8 +1,7 @@
 import { Navbar } from "@/components/navbar"
 import { Hero } from "@/components/hero"
-import { Stats } from "@/components/stats"
 import { FAQSection } from "@/components/faq-section"
-import { HowItWorks } from "@/components/how-it-works"
+import { RoleSelector } from "@/components/role-selector" // <-- Changed: import RoleSelector
 
 export default function Home() {
   return (
@@ -11,8 +10,18 @@ export default function Home() {
         <Navbar />
         <Hero />
       </div>
-      <Stats />
-      <HowItWorks />
+      <div className="container max-w-2xl mx-auto space-y-2">
+        <div className="relative">
+          <h1 className="text-3xl font-bold text-green-800 text-center">
+            Application Form
+          </h1>
+          <p className="p-4 text-center">
+            Select your role to begin your application:
+          </p>
+        </div>
+        {/* Removed the form provider and form step; now only show the role selector */}
+        <RoleSelector />  {/* <-- Change: show RoleSelector directly */}
+      </div>
       <FAQSection />
     </main>
   )
