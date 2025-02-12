@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
 
 export function Hero() {
     return (
@@ -9,15 +7,9 @@ export function Hero() {
                     Liquidity for Your Private Investments
                 </h1>
                 <p className="text-lg text-gray-600 mb-4">
-                    Buy & sell LP interests in top-tier VC and PE funds seamlessly.
+                    A  marketplace empowering LPs to buy, sell, and trade interests in venture capital, private equity, hedge funds, and beyond.
                 </p>
-                <Link href="/form">
-                    <div className="mb-12">
-                        <Button className="bg-black text-white px-8 py-4 rounded-3xl hover:shadow-sm active:shadow-md">
-                            Get Started
-                        </Button>
-                    </div>
-                </Link>
+
             </div>
         </section >
     )

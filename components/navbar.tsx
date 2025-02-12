@@ -15,13 +15,11 @@ export function Navbar() {
                         Dots
                     </Link>
 
-
                     <div className="flex flex-row gap-4 items-center">
-                        <Link href="/form">
+                        <Link href="#get-started">
                             <Button variant="default" size="sm" className="rounded-3xl bg-black text-white p-4 hover:shadow-sm">
                                 Get Started
                             </Button>
-
                         </Link>
                         <Link href="#faq" className="text-md text-black hover:text-gray-700 font-medium">
                             FAQ

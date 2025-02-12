@@ -12,11 +12,11 @@ export default function Home() {
       </div>
       <div className="container max-w-2xl mx-auto space-y-2">
         <div className="relative">
-          <h1 className="text-3xl font-bold text-green-800 text-center">
-            Application Form
+          <h1 id="get-started" className="text-3xl font-bold text-green-800 text-center">
+            Get Started
           </h1>
           <p className="p-4 text-center">
-            Select your role to begin your application:
+            GPLP is an invite only marketplace with a strict vetting process. Begin your application now.
           </p>
         </div>
         {/* Removed the form provider and form step; now only show the role selector */}
