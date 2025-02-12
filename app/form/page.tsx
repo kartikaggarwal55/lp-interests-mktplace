@@ -28,15 +28,15 @@ function FormStep() {
 
 // A nested component to update form context based on the query parameter
 function FormContent() {
-    const searchParams = useSearchParams(); // Get URL query parameters
-    const queryRole = searchParams.get("role"); // Retrieve the role from the URL
+    const searchParams = useSearchParams(); // <-- Get URL query parameters
+    const queryRole = searchParams.get("role"); // <-- Retrieve the role from the URL
     const { role, setRole, setStep } = useForm();
 
     useEffect(() => {
         // If a valid role is provided in the URL and not yet set in context, update the context.
         if (queryRole && (queryRole === "buyer" || queryRole === "seller") && !role) {
-            setRole(queryRole as "buyer" | "seller"); // Update the role in context
-            setStep(1); // Start the form at step 1 (CommonInfoForm)
+            setRole(queryRole as "buyer" | "seller"); // <-- Update the role in context
+            setStep(1); // <-- Start the form at step 1 (CommonInfoForm)
         }
     }, [queryRole, role, setRole, setStep]);
 
@@ -65,7 +65,28 @@ export default function FormPage() {
         );
     }
 
-    // (Assuming any whitelist checks remain here)
+    // <-- Change: Define your whitelist of allowed emails.
+    const whitelistedEmails: string[] = [
+        "aggarwalkartik55@gmail.com",
+        "ari@sisu.site",
+        "ilisha.aggarwal30@gmail.com"
+        // Add more allowed emails as needed
+    ];
+
+    // <-- Change: Check if the authenticated user's email is in the whitelist.
+    if (!user?.email || !whitelistedEmails.includes(user.email)) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center">
+                <h1 className="text-3xl font-bold text-red-600">Access Denied</h1>
+                <p className="mt-4 text-lg">
+                    Your email address (<strong>{user?.email || "unknown"}</strong>) is not authorized to access this form.
+                </p>
+                <div className="mt-6">
+                    <LogoutButton />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-primaryGreen/40 to-softGreenBackground py-10 px-4 relative">
