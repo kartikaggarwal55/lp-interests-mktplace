@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import Logo from "./Logo";
 
 
 export function Navbar() {
@@ -11,18 +12,19 @@ export function Navbar() {
                 <div className="flex h-16 items-center justify-between">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2 font-bold text-black">
-                        <span className="size-2 rounded-full bg-black" />
-                        Dots
+                        <Logo />
                     </Link>
 
-                    <div className="flex flex-row gap-4 items-center">
+                    <div className="flex h-16 items-center justify-between gap-4">
                         <Link href="#get-started">
                             <Button variant="default" size="sm" className="rounded-3xl bg-black text-white p-4 hover:shadow-sm">
                                 Get Started
                             </Button>
                         </Link>
-                        <Link href="#faq" className="text-md text-black hover:text-gray-700 font-medium">
-                            FAQ
+                        <Link href="#faq">
+                            <Button variant="default" size="sm" className="rounded-3xl bg-black text-white p-4 hover:shadow-sm">
+                                FAQ
+                            </Button>
                         </Link>
 
                     </div>

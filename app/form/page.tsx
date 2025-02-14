@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
 import Link from "next/link";
 import LogoutButton from "@/components/logout-button";
+import Logo from "@/components/Logo";
 
 function FormStep() {
     const { step, role } = useForm();
@@ -77,34 +78,52 @@ export default function FormPage() {
     // Check if the authenticated user's email is in the whitelist.
     if (!user?.email || !whitelistedEmails.includes(user.email)) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center">
-                <h1 className="text-3xl font-bold text-red-600">Access Denied</h1>
-                <p className="mt-4 text-lg">
-                    Your email address (<strong>{user?.email || "unknown"}</strong>) is not authorized to access this form.
-                </p>
-                <div className="mt-6">
-                    <LogoutButton />
-                </div>
+            <div className="min-h-screen bg-gray-50 px-4 flex flex-col">
+                <header className="flex items-center justify-between p-5 py-6"> {/* Changed: Added header flex container */}
+                    <Link href="/" className="flex items-center font-bold text-black">
+                        <Logo /> {/* Changed: Added logo */}
+                    </Link>
+                    <div className="flex gap-2">
+                        <Link href="/">
+                            <Button
+                                size="sm"
+                                className="rounded-outlinep-3 hover:shadow-sm active:shadow-md gap-3"
+                            >
+                                <Home className="h-4 w-4" />
+                            </Button>
+                        </Link>
+                        <LogoutButton />
+                    </div>
+                </header>
+                <main className="flex flex-col items-center justify-center flex-1">
+                    <h1 className="text-3xl font-bold text-red-600">Access Denied</h1>
+                    <p className="mt-4 text-lg text-center">
+                        Your email address (<strong>{user?.email || "unknown"}</strong>) is not authorized to access this form.
+                    </p>
+                </main>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-primaryGreen/40 to-softGreenBackground py-10 px-4 relative">
-            <div className="flex flex-row absolute top-5 right-9 gap-2">
-                <Link href="/">
-                    <Button
-                        size="sm"
-                        className="rounded-outlinep-3 hover:shadow-sm active:shadow-md gap-3"
-                    >
-                        <Home className="h-4 w-4" />
-                    </Button>
-
+        <div className="min-h-screen bg-gradient-to-br from-primaryGreen/40 to-softGreenBackground px-4 py-6">
+            <header className="flex items-center justify-between px-5"> {/* Changed: Added header flex container */}
+                <Link href="/" className="flex items-center font-bold text-black">
+                    <Logo /> {/* Changed: Added logo */}
                 </Link>
-                <LogoutButton />
-
-            </div>
-            <div className="container max-w-2xl mx-auto space-y-2">
+                <div className="flex gap-2">
+                    <Link href="/">
+                        <Button
+                            size="sm"
+                            className="rounded-outlinep-3 hover:shadow-sm active:shadow-md gap-3"
+                        >
+                            <Home className="h-4 w-4" />
+                        </Button>
+                    </Link>
+                    <LogoutButton />
+                </div>
+            </header>
+            <main className="container max-w-2xl mx-auto space-y-2">
                 <div className="relative">
                     <h1 className="text-3xl font-bold text-green-800 text-center">
                         Application Form
@@ -114,7 +133,7 @@ export default function FormPage() {
                     </p>
                 </div>
                 <FormStep />
-            </div>
+            </main>
         </div>
     );
 }
