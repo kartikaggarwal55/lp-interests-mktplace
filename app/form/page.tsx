@@ -61,8 +61,9 @@ export default function FormPage() {
     if (isLoading || !user) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-                {/* Spinner component omitted for brevity */}
-                <p className="text-lg text-gray-700">Loading, please wait...</p>
+                <div className="animate-spin inline-block size-11 border-[4px] border-current border-t-transparent text-darkGreenAccent rounded-full dark:text-darkGreenAccent" role="status" aria-label="loading">
+                </div>
+                <p className="text-lg text-gray-700 py-3">Loading...</p>
             </div>
         );
     }
